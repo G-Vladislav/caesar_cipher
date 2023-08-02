@@ -3,10 +3,29 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
     private static final String alphabetUkr = "АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯабвгґдеєжзиіїйклмнопрстуфхцчшщьюя.,\":-!? ";
+
+    private static final ArrayList<String> words = new ArrayList<>(Arrays.asList("пан","привіт","комп'ютер","телефон","стілець","ліжко","кімната","квартира","привіт",
+            "будинок","магазин","ресторан","музей","парк","дорога","село","місто","університет","школа","дякую","будь ласка","так","добре","побачення",
+            "справи","зват","мене","також","дуже","велике","маленьке","більше","менше","день","рік","місяць","тиждень","хліб","їхнь","країнсь",
+            "вода","сонце","місяць","зірка","небо","дерево","квітка","мова","книга","ниця","енка","еньк","льно","вати","ання","ення","ість","ечек","граф",
+            "вітаю","невідомий","неділя","недовго","недоро","незабаром","немає","необхід","ніч","ночі","обіцят","обрати","ходжен","правд",
+            "оголошення","одяг","озеро","око","олівець","осінь","особливо","отець","очі","палець","парк","парта","пенал","пензлик","передача",
+            "переклад","перекладач","перша","перший","підлог","підніматися","після","пісня","піцца","плащ","плітка","справжнь","погано",
+            "погода","подорож","покоївка","поле","помідор","пора","поруч","поспішати","постачати","починаючи","офіцій","докумен",
+            "почуття","працювати","прекрасний","приймати","примар","принести","принц","програма","важна","кільк","радикаль",
+            "проїхати","прочитати","птиця","пустеля","путівник","пучок","п'ятниця","ревнивий","робити","родич","пропонов",
+            "рослина","рука","рух","ручка","ручник","сад","садити","сам","самка","саме","самий","самі","відчутт",
+            "сарай","свій","світло","секрет","сестра","сім","сім'я","слуха","слідкувати","слово","сніг","правоп",
+            "сніданок","собака","сон","сонце","сосна","спати","спина","сподіватися","тобі","товариш","той",
+            "спорт","справж","справ","сприя","стадо","стакан","старий","стіл","сторона","стояти","студент","сукня","сумка","сумн","сусід",
+            "сутінки","сухий","сходити","схожий","сцена","сьогодні","сюжет","сюрприз","так","таксі",
+            "там","танок","тата","тварина","телефон","темний","термін","тесляр","тетя","тиждень","тижня","тиран"));
     private static String sourceFilePath;
     private static String destinationFilePath;
 
@@ -68,9 +87,15 @@ public class Main {
                  FileWriter filewriter = new FileWriter(destinationFilePath);
                  BufferedReader reader = new BufferedReader(fileRead) ) {
 
-                while (reader.ready()) {
-                    String  str = Encrypt_decrypt(reader.readLine(), key, operation);
-                    filewriter.write(str);
+                if (key!=0) {
+                    while (reader.ready()) {
+                        String str = Encrypt_decrypt(reader.readLine(), key, operation);
+                        filewriter.write(str);
+                    }
+                } else {
+                    while (reader.ready()) {
+                        filewriter.write(BruteForce(reader.readLine()));
+                    }
                 }
             } catch (Exception e) {
                 System.out.println("Something went wrong : " + e);
@@ -104,5 +129,22 @@ public class Main {
             }
         }
         return strBuild.toString();
+    }
+
+    public static String BruteForce(String string){
+
+        for (byte i=1; i<alphabetUkr.length(); i++){
+            String str = Encrypt_decrypt(string, i, (byte)-1);
+            String strLow = str.toLowerCase();
+            if (strLow.contains("! ") || strLow.contains("? ") || strLow.contains(", ") || strLow.contains(". ")){
+                for (int j=0; j<words.size(); j++){
+                    if (strLow.contains(words.get(j))) {
+                        System.out.println("Можливий варіант ключа: "+i);
+                        return str;
+                    }
+                }
+            }
+        }
+        return "";
     }
 }
