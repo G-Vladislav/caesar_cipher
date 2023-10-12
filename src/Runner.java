@@ -7,18 +7,18 @@ public class Runner {
 
         while (cycleMenu>=0) {
             cli.mainMenu();
-            cycleMenu = cli.returnIntEnteredValue();
+            cycleMenu = cli.returnIntEnteredValue(false);
             //cli.clearCashScanner();
 
             switch (cycleMenu){
                 case 1 -> {
-                    runEncrypt();
+                    runEncryptCLI();
                 }
                 case 2 -> {
-                    runDecrypt(false);
+                    runDecryptCLI(false);
                 }
                 case 3 -> {
-                    runDecrypt(true);
+                    runDecryptCLI(true);
                 }
                 case 4 -> {
                     cycleMenu = -1;
@@ -28,26 +28,33 @@ public class Runner {
         cli.shutDown();
     }
 
-    void runEncrypt(){
-        FileService fileService = new FileService();
-        boolean statusFile = fileService.setSourceFilePath(cli.menuInputPathFile(),"[ENCRYPT]");
-        if (statusFile) {
-            cli.menuCiphKey();
-            fileService.writeDataToFile(cli.returnIntEnteredValue(),1);
-        }
+    void runEncryptCLI(){
+        runEncrypt(cli.menuInputPathFile(), cli.returnIntEnteredValue(true));
+   }
 
+    void runDecryptCLI(boolean brutForce){
+        runDecrypt(cli.menuInputPathFile(), cli.returnIntEnteredValue(true), brutForce);
     }
 
-    void runDecrypt(boolean brutForce){
+
+    void runEncrypt(String inputFilePath, int keyValue){
         FileService fileService = new FileService();
-        boolean statusFile = fileService.setSourceFilePath(cli.menuInputPathFile(),"[DECRYPT]");
+        boolean statusFile = fileService.setSourceFilePath(inputFilePath,"[ENCRYPT]");
         if (statusFile) {
-            if (brutForce) {
-                fileService.writeDataToFile(0,-1);
-            } else {
-                cli.menuCiphKey();
-                fileService.writeDataToFile(cli.returnIntEnteredValue(),-1);
-            }
+            fileService.writeDataToFile(keyValue,1);
+        }
+    }
+
+    void runDecrypt(String inputFilePath, int keyValue, boolean brutForce){
+        FileService fileService = new FileService();
+        boolean statusFile = fileService.setSourceFilePath(inputFilePath, (brutForce) ? "[BRUTE_FORCE]" : "[DECRYPT]");
+        if (statusFile) {
+            fileService.writeDataToFile((brutForce) ? 0 : keyValue, -1);
+//            if (brutForce) {
+//                fileService.writeDataToFile(0,-1);
+//            } else {
+//                fileService.writeDataToFile(keyValue,-1);
+//            }
         }
     }
 

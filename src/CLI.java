@@ -11,7 +11,8 @@ public class CLI {
           System.out.println(" -1 - Exit");
      }
 
-     int returnIntEnteredValue(){
+     int returnIntEnteredValue(boolean askKey){
+          if (askKey) { System.out.println("Specify the encryption (decryption) key:");}
           if (scan.hasNextInt()) {
                int tempValue = scan.nextInt();
                scan.nextLine();
@@ -19,15 +20,12 @@ public class CLI {
           } else {
                System.out.println("Incorrect value! Could be a number.");
                scan.nextLine();
-               return returnIntEnteredValue();
+               return returnIntEnteredValue(askKey);
           }
      }
      String menuInputPathFile(){
           System.out.println("Specify the path to the file: ");
           return scan.nextLine();
-     }
-     void menuCiphKey() {
-         System.out.println("Specify the encryption (decryption) key:");
      }
 
      void shutDown() {
